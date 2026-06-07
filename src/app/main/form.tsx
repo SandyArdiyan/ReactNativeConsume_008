@@ -62,8 +62,8 @@ export default function FormHewanScreen() {
       nama: cleanNama,
       jenis: cleanJenis,
       harga: numericHarga,
-      tanggalLahir: formatDateToString(tanggalLahir),
-      status: status as any // Memaksa TypeScript menerima status apa pun
+      tanggal_lahir: formatDateToString(tanggalLahir), // UBAH: dari tanggalLahir menjadi tanggal_lahir
+      status: status as any
     };
 
     if (isEditMode) {
@@ -102,7 +102,17 @@ export default function FormHewanScreen() {
           </TouchableOpacity>
 
           {showDatePicker && (
-            <DateTimePicker value={tanggalLahir} mode="date" display={Platform.OS === 'ios' ? 'spinner' : 'default'} onChange={(event, date) => { setShowDatePicker(Platform.OS === 'ios'); if (date) setTanggalLahir(date); }} maximumDate={new Date()} />
+            <DateTimePicker 
+              value={tanggalLahir} 
+              mode="date" 
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'} 
+              onValueChange={(event, date) => { 
+                setShowDatePicker(Platform.OS === 'ios'); 
+                if (date) setTanggalLahir(date); 
+              }} 
+              onDismiss={() => setShowDatePicker(false)}
+              maximumDate={new Date()} 
+            />
           )}
 
           {/* Dropdown Status */}
