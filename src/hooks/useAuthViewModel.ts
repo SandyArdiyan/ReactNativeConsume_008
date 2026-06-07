@@ -29,7 +29,7 @@ export const useAuthViewModel = () => {
     setError(null);
     try {
       await authRepo.register(username, email, password);
-      router.replace('/auth/login');
+      router.replace('/');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed');
     } finally {
