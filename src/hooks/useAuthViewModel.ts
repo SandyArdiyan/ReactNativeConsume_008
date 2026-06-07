@@ -1,4 +1,4 @@
-    import { useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import { useState } from 'react';
 import { AuthRepositoryImpl } from '../data/repositories/AuthRepositoryImpl';
@@ -29,7 +29,7 @@ export const useAuthViewModel = () => {
     setError(null);
     try {
       await authRepo.register(username, email, password);
-      router.replace('/');
+      router.replace('/'); // Sudah diperbaiki agar kembali ke halaman login (index)
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed');
     } finally {
