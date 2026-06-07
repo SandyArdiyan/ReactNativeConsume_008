@@ -14,11 +14,12 @@ export default function FormHewanScreen() {
   const { id } = useLocalSearchParams(); 
   const isEditMode = !!id;
 
+  // State Form
   const [nama, setNama] = useState('');
   const [jenis, setJenis] = useState('');
   const [harga, setHarga] = useState('');
   const [tanggalLahir, setTanggalLahir] = useState(new Date());
-  const [status, setStatus] = useState('tersedia');
+  const [status, setStatus] = useState('tersedia'); // Default status
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const { addHewan, updateHewan, getHewanById, loading, error } = useHewanViewModel();
@@ -32,7 +33,7 @@ export default function FormHewanScreen() {
           setNama(data.nama);
           setJenis(data.jenis);
           setHarga(data.harga.toString());
-          setStatus(data.status || 'tersedia');
+          setStatus(data.status || 'tersedia'); // Ambil status dari DB
           if (data.tanggal_lahir) {
             setTanggalLahir(new Date(data.tanggal_lahir));
           }
@@ -55,15 +56,16 @@ export default function FormHewanScreen() {
     const numericHarga = Number(harga);
 
     if (!cleanNama || !cleanJenis || !harga || isNaN(numericHarga) || numericHarga <= 0) {
-      return Alert.alert('Validasi Gagal', 'Pastikan semua form terisi dengan benar (Harga berupa angka > 0).');
+      return Alert.alert('Validasi Gagal', 'Pastikan semua form terisi dengan benar.');
     }
 
+    // PAYLOAD DISESUAIKAN DENGAN BACKEND (tanggal_lahir)
     const payload = {
       nama: cleanNama,
       jenis: cleanJenis,
       harga: numericHarga,
-      tanggal_lahir: formatDateToString(tanggalLahir), // UBAH: dari tanggalLahir menjadi tanggal_lahir
-      status: status as any
+      tanggal_lahir: formatDateToString(tanggalLahir),
+      status: status as any // MEMAKSA TYPESCRIPT MENERIMA DATA INI
     };
 
     if (isEditMode) {
@@ -77,26 +79,25 @@ export default function FormHewanScreen() {
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         
-        {/* Header dengan Tombol Kembali */}
+        {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color="#0f172a" />
           </TouchableOpacity>
-          
-          {isEditMode ? (
-            <ThemedText type="title" style={styles.titleText}>{'Edit Data Ternak'}</ThemedText>
-          ) : (
-            <ThemedText type="title" style={styles.titleText}>{'Tambah Ternak Baru'}</ThemedText>
-          )}
+          <ThemedText type="title" style={styles.titleText}>
+            {isEditMode ? 'Edit Data Ternak' : 'Tambah Ternak Baru'}
+          </ThemedText>
         </View>
 
         <ThemedView style={styles.form}>
           {error && <ThemedText style={styles.errorText}>{error}</ThemedText>}
 
+          {/* Input Nama & Jenis */}
           <TextInput style={styles.input} placeholder="Nama Hewan" placeholderTextColor="#94a3b8" value={nama} onChangeText={setNama} />
           <TextInput style={styles.input} placeholder="Jenis (contoh: Sapi Limosin)" placeholderTextColor="#94a3b8" value={jenis} onChangeText={setJenis} />
           <TextInput style={styles.input} placeholder="Harga (Rupiah)" placeholderTextColor="#94a3b8" keyboardType="numeric" value={harga} onChangeText={(text) => setHarga(text.replace(/[^0-9]/g, ''))} />
 
+          {/* Date Picker */}
           <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)} activeOpacity={0.7}>
             <ThemedText style={{ color: '#0f172a' }}>{`Tanggal Lahir : ${formatDateToString(tanggalLahir)}`}</ThemedText>
           </TouchableOpacity>
@@ -115,22 +116,28 @@ export default function FormHewanScreen() {
             />
           )}
 
-          {/* Dropdown Status */}
-          <View style={styles.pickerContainer}>
-            <Picker selectedValue={status} onValueChange={(itemValue) => setStatus(itemValue)} style={styles.picker}>
+          {/* DROPDOWN STATUS (Hanya menyertakan yang didukung DB) */}
+          <ThemedText style={styles.label}>Status Ternak:</ThemedText>
+          <View style={styles.pickerWrapper}>
+            <Picker
+              selectedValue={status}
+              onValueChange={(itemValue) => setStatus(itemValue)}
+              style={styles.picker}
+              dropdownIconColor="#0284c7"
+            >
               <Picker.Item label="Tersedia" value="tersedia" />
               <Picker.Item label="Terjual" value="terjual" />
-              <Picker.Item label="Sakit" value="sakit" />
             </Picker>
           </View>
 
+          {/* Tombol Simpan */}
           <TouchableOpacity style={styles.submitButton} onPress={onSubmit} disabled={loading}>
             {loading ? (
               <ActivityIndicator color="#fff" />
-            ) : isEditMode ? (
-              <ThemedText style={styles.submitButtonText}>{'Simpan Perubahan'}</ThemedText>
             ) : (
-              <ThemedText style={styles.submitButtonText}>{'Simpan ke Database'}</ThemedText>
+              <ThemedText style={styles.submitButtonText}>
+                {isEditMode ? 'Simpan Perubahan' : 'Simpan ke Database'}
+              </ThemedText>
             )}
           </TouchableOpacity>
           
@@ -141,16 +148,44 @@ export default function FormHewanScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: '#fff' },
   safeArea: { flex: 1, paddingHorizontal: 24 },
   header: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
   backButton: { marginRight: 16, padding: 4 },
-  titleText: { fontSize: 22 },
-  form: { gap: 16 },
-  input: { backgroundColor: '#f8fafc', borderWidth: 1, borderColor: '#cbd5e1', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, fontSize: 16, color: '#0f172a' },
-  pickerContainer: { backgroundColor: '#f8fafc', borderWidth: 1, borderColor: '#cbd5e1', borderRadius: 12, overflow: 'hidden' },
-  picker: { width: '100%', height: 50 },
-  submitButton: { backgroundColor: '#0284c7', paddingVertical: 16, borderRadius: 12, alignItems: 'center', marginTop: 12 },
+  titleText: { fontSize: 20, fontWeight: 'bold', color: '#0f172a' },
+  form: { gap: 12 },
+  label: { fontSize: 14, fontWeight: '600', color: '#64748b', marginBottom: -4 },
+  input: { 
+    backgroundColor: '#f8fafc', 
+    borderWidth: 1, 
+    borderColor: '#cbd5e1', 
+    borderRadius: 12, 
+    paddingHorizontal: 16, 
+    paddingVertical: 14, 
+    fontSize: 16, 
+    color: '#0f172a' 
+  },
+  pickerWrapper: { 
+    backgroundColor: '#f8fafc', 
+    borderWidth: 1, 
+    borderColor: '#cbd5e1', 
+    borderRadius: 12, 
+    overflow: 'hidden',
+    justifyContent: 'center'
+  },
+  picker: { 
+    width: '100%', 
+    height: 55,
+    color: '#0f172a'
+  },
+  submitButton: { 
+    backgroundColor: '#0284c7', 
+    paddingVertical: 16, 
+    borderRadius: 12, 
+    alignItems: 'center', 
+    marginTop: 10,
+    elevation: 2
+  },
   submitButtonText: { color: '#ffffff', fontSize: 16, fontWeight: 'bold' },
   errorText: { color: '#ef4444', textAlign: 'center', fontWeight: '600' },
 });
