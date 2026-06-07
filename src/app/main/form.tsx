@@ -23,6 +23,7 @@ export default function FormHewanScreen() {
 
   const { addHewan, updateHewan, getHewanById, loading, error } = useHewanViewModel();
 
+  // Load data jika dalam mode Edit
   useEffect(() => {
     if (isEditMode) {
       const loadData = async () => {
@@ -62,7 +63,7 @@ export default function FormHewanScreen() {
       jenis: cleanJenis,
       harga: numericHarga,
       tanggalLahir: formatDateToString(tanggalLahir),
-      status: status as any // Memaksa TypeScript menerima status apa pun (termasuk 'sakit')
+      status: status as any // Memaksa TypeScript menerima status apa pun
     };
 
     if (isEditMode) {
@@ -76,16 +77,16 @@ export default function FormHewanScreen() {
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         
+        {/* Header dengan Tombol Kembali */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color="#0f172a" />
           </TouchableOpacity>
           
-          {/* Linter Fix: Memisahkan komponen agar tidak terbaca sebagai string lepas */}
           {isEditMode ? (
-            <ThemedText type="title" style={styles.titleText}>Edit Data Ternak</ThemedText>
+            <ThemedText type="title" style={styles.titleText}>{'Edit Data Ternak'}</ThemedText>
           ) : (
-            <ThemedText type="title" style={styles.titleText}>Tambah Ternak Baru</ThemedText>
+            <ThemedText type="title" style={styles.titleText}>{'Tambah Ternak Baru'}</ThemedText>
           )}
         </View>
 
@@ -104,6 +105,7 @@ export default function FormHewanScreen() {
             <DateTimePicker value={tanggalLahir} mode="date" display={Platform.OS === 'ios' ? 'spinner' : 'default'} onChange={(event, date) => { setShowDatePicker(Platform.OS === 'ios'); if (date) setTanggalLahir(date); }} maximumDate={new Date()} />
           )}
 
+          {/* Dropdown Status */}
           <View style={styles.pickerContainer}>
             <Picker selectedValue={status} onValueChange={(itemValue) => setStatus(itemValue)} style={styles.picker}>
               <Picker.Item label="Tersedia" value="tersedia" />
@@ -116,9 +118,9 @@ export default function FormHewanScreen() {
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : isEditMode ? (
-              <ThemedText style={styles.submitButtonText}>Simpan Perubahan</ThemedText>
+              <ThemedText style={styles.submitButtonText}>{'Simpan Perubahan'}</ThemedText>
             ) : (
-              <ThemedText style={styles.submitButtonText}>Simpan ke Database</ThemedText>
+              <ThemedText style={styles.submitButtonText}>{'Simpan ke Database'}</ThemedText>
             )}
           </TouchableOpacity>
           

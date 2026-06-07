@@ -1,7 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import { ThemedText } from '../../components/ThemedText';
+import { ActivityIndicator, Alert, StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
 import { ThemedView } from '../../components/ThemedView';
 import { useAuthViewModel } from '../../hooks/useAuthViewModel';
 
@@ -23,37 +22,16 @@ export default function RegisterScreen() {
     const cleanUsername = username.trim();
     const cleanEmail = email.trim();
 
-    if (!cleanUsername) {
-      Alert.alert('Validasi Gagal', 'Username wajib diisi!');
-      return;
-    }
-    if (cleanUsername.length < 3) {
-      Alert.alert('Validasi Gagal', 'Username minimal 3 karakter!');
-      return;
-    }
-    if (/\s/.test(cleanUsername)) {
-      Alert.alert('Validasi Gagal', 'Username tidak boleh mengandung spasi!');
-      return;
-    }
+    if (!cleanUsername) return Alert.alert('Validasi Gagal', 'Username wajib diisi!');
+    if (cleanUsername.length < 3) return Alert.alert('Validasi Gagal', 'Username minimal 3 karakter!');
+    if (/\s/.test(cleanUsername)) return Alert.alert('Validasi Gagal', 'Username tidak boleh mengandung spasi!');
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!cleanEmail) {
-      Alert.alert('Validasi Gagal', 'Email wajib diisi!');
-      return;
-    }
-    if (!emailRegex.test(cleanEmail)) {
-      Alert.alert('Validasi Gagal', 'Format email salah!');
-      return;
-    }
+    if (!cleanEmail) return Alert.alert('Validasi Gagal', 'Email wajib diisi!');
+    if (!emailRegex.test(cleanEmail)) return Alert.alert('Validasi Gagal', 'Format email salah!');
 
-    if (!password) {
-      Alert.alert('Validasi Gagal', 'Password wajib diisi!');
-      return;
-    }
-    if (password.length < 6) {
-      Alert.alert('Validasi Gagal', 'Password minimal 6 karakter!');
-      return;
-    }
+    if (!password) return Alert.alert('Validasi Gagal', 'Password wajib diisi!');
+    if (password.length < 6) return Alert.alert('Validasi Gagal', 'Password minimal 6 karakter!');
 
     await handleRegister(cleanUsername, cleanEmail, password);
   };
@@ -61,14 +39,14 @@ export default function RegisterScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.card}>
-        <ThemedText type="title" style={styles.title}>
-          Daftar Akun Ternak
-        </ThemedText>
-        <ThemedText style={styles.subtitle}>
-          Silakan isi data diri Anda untuk membuat akun baru
-        </ThemedText>
+        <Text style={[styles.title, { color: '#0f172a', fontSize: 24, fontWeight: 'bold' }]}>
+          {'Daftar Akun Ternak'}
+        </Text>
+        <Text style={styles.subtitle}>
+          {'Silakan isi data diri Anda untuk membuat akun baru'}
+        </Text>
 
-        <ThemedText style={styles.label}>Username</ThemedText>
+        <Text style={styles.label}>{'Username'}</Text>
         <TextInput
           style={styles.input}
           placeholder="Masukkan username"
@@ -78,7 +56,7 @@ export default function RegisterScreen() {
           autoCapitalize="none"
         />
 
-        <ThemedText style={styles.label}>Email</ThemedText>
+        <Text style={styles.label}>{'Email'}</Text>
         <TextInput
           style={styles.input}
           placeholder="Masukkan email"
@@ -89,7 +67,7 @@ export default function RegisterScreen() {
           autoCapitalize="none"
         />
 
-        <ThemedText style={styles.label}>Password</ThemedText>
+        <Text style={styles.label}>{'Password'}</Text>
         <TextInput
           style={styles.input}
           placeholder="Masukkan password"
@@ -108,16 +86,16 @@ export default function RegisterScreen() {
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <ThemedText style={styles.buttonText}>Daftar Sekarang</ThemedText>
+            <Text style={styles.buttonText}>{'Daftar Sekarang'}</Text>
           )}
         </TouchableOpacity>
 
         <ThemedView style={styles.footer}>
-          <ThemedText>Sudah punya akun? </ThemedText>
+          <Text style={{ color: '#0f172a' }}>{'Sudah punya akun? '}</Text>
           <TouchableOpacity onPress={() => router.replace('/')}>
-            <ThemedText type="link" style={styles.linkText}>
-              Masuk di sini
-            </ThemedText>
+            <Text style={styles.linkText}>
+              {'Masuk di sini'}
+            </Text>
           </TouchableOpacity>
         </ThemedView>
       </ThemedView>
@@ -130,7 +108,7 @@ const styles = StyleSheet.create({
   card: { padding: 16, borderRadius: 12 },
   title: { textAlign: 'center', marginBottom: 8 },
   subtitle: { textAlign: 'center', color: '#64748b', fontSize: 14, marginBottom: 24 },
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 8 },
+  label: { fontSize: 14, fontWeight: '600', marginBottom: 8, color: '#0f172a' },
   input: {
     borderWidth: 1,
     borderColor: '#cbd5e1',
@@ -145,5 +123,5 @@ const styles = StyleSheet.create({
   buttonDisabled: { backgroundColor: '#94a3b8' },
   buttonText: { color: '#ffffff', fontWeight: 'bold', fontSize: 16 },
   footer: { flexDirection: 'row', justifyContent: 'center', marginTop: 24, backgroundColor: 'transparent' },
-  linkText: { fontWeight: '600' },
+  linkText: { fontWeight: '600', color: '#0284c7' },
 });
